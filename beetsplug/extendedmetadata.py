@@ -13,7 +13,7 @@ class ExtendedMetaDataMatchQuery(FieldQuery):
 
     base64_pattern = '(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?=?'
     metadata_pattern = f'^EMD: ({base64_pattern})$'
-    selector_pattern = '^(\\w+):(\\w*)$'
+    selector_pattern = '^(\\w+):(\\w+(,\\w+)*)*$'
     selector_pattern_regex = '^(\\w+)::(.*)$'
 
     @classmethod
@@ -50,6 +50,8 @@ class ExtendedMetaDataMatchQuery(FieldQuery):
         if field_pattern is None:
             field_pattern = ''
 
+        field_patterns = field_pattern.split(',') if not use_regex and ',' in field_pattern else [field_pattern]
+
         try:
             field_value = json_object[field_name]
         except KeyError:
@@ -68,14 +70,18 @@ class ExtendedMetaDataMatchQuery(FieldQuery):
                 return False
             else:
                 for item in field_value:
-                    if field_pattern.lower() == item.lower():
-                        return True
+                    for pattern in field_patterns:
+                        if pattern.lower() == item.lower():
+                            return True
                 return False
         else:
             if use_regex:
                 return re.search(field_pattern, field_value) is not None
             else:
-                return field_pattern.lower() == field_value.lower()
+                for pattern in field_patterns:
+                    if pattern.lower() == field_value.lower():
+                        return True
+        return False
 
 
 class ExtendedMetaDataPlugin(BeetsPlugin):
