@@ -13,7 +13,7 @@ class ExtendedMetaDataMatchQuery(FieldQuery):
 
     base64_pattern = '(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?=?'
     metadata_pattern = f'^EMD: ({base64_pattern})$'
-    selector_pattern = '^(\\w+):(\\w+(,\\w+)*)*$'
+    selector_pattern = '^(\\w+):((!?)\\w+(,(!?)\\w+)*)*$'
     selector_pattern_regex = '^(\\w+)::(.*)$'
 
     @classmethod
@@ -52,6 +52,9 @@ class ExtendedMetaDataMatchQuery(FieldQuery):
 
         field_patterns = field_pattern.split(',') if not use_regex and ',' in field_pattern else [field_pattern]
 
+        negated_field_patterns = [x[1:] for x in field_patterns if x.startswith('!')]
+        field_patterns = [x for x in field_patterns if not x.startswith('!')]
+
         try:
             field_value = json_object[field_name]
         except KeyError:
@@ -69,11 +72,15 @@ class ExtendedMetaDataMatchQuery(FieldQuery):
                         return True
                 return False
             else:
-                for item in field_value:
-                    for pattern in field_patterns:
+                for pattern in field_patterns:
+                    for item in field_value:
                         if pattern.lower() == item.lower():
                             return True
-                return False
+                for pattern in negated_field_patterns:
+                    for item in field_value:
+                        if pattern.lower() == item.lower():
+                            return False
+                return len(negated_field_patterns) > 0
         else:
             if use_regex:
                 return re.search(field_pattern, field_value) is not None
@@ -81,7 +88,10 @@ class ExtendedMetaDataMatchQuery(FieldQuery):
                 for pattern in field_patterns:
                     if pattern.lower() == field_value.lower():
                         return True
-        return False
+                for pattern in negated_field_patterns:
+                    if pattern.lower() == field_value.lower():
+                        return False
+                return len(negated_field_patterns) > 0
 
 
 class ExtendedMetaDataPlugin(BeetsPlugin):
