@@ -1,0 +1,9 @@
+dist/
+*.egg-info/
+build/
+.noseids
+.coverage
+coverage/
+*.pyc
+.tox/
+.vimrc
