@@ -11,10 +11,11 @@ from beetsplug.audiofilefields import fields as audio_file_fields
 
 class ExtendedMetaDataMatchQuery(FieldQuery):
 
+    word_pattern = "[a-zA-Z0-9-_]+"
     base64_pattern = '(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?=?'
     metadata_pattern = f'^EMD: ({base64_pattern})$'
-    selector_pattern = '^(\\w+):((!?)\\w+(,(!?)\\w+)*)*$'
-    selector_pattern_regex = '^(\\w+)::(.*)$'
+    selector_pattern = f'^({word_pattern}):((!?){word_pattern}(,(!?){word_pattern})*)*$'
+    selector_pattern_regex = f'^({word_pattern})::(.*)$'
 
     @classmethod
     def value_match(cls, pattern, val):

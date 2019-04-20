@@ -7,7 +7,7 @@ class ExtendedMetaDataMatchQueryTest(unittest.TestCase):
 
     def setUp(self):
         # {"origin":"korea","language":["korean","english"],"vocal_gender":"male"}
-        self.extended_metadata = 'EMD: eyJvcmlnaW4iOiJrb3JlYSIsImxhbmd1YWdlIjpbImtvcmVhbiIsImVuZ2xpc2giXSwidm9jYWxfZ2VuZGVyIjoibWFsZSJ9'
+        self.extended_metadata = 'EMD: eyJvcmlnaW4iOiJrb3JlYSIsImxhbmd1YWdlIjpbImtvcmVhbiIsImVuZ2xpc2giXSwidm9jYWxfZ2VuZGVyIjoibWFsZSIsICJnZW5yZSI6ImstcG9wIn0='
         self.sut = ExtendedMetaDataMatchQuery(None, None)
 
     def test_value_match_invalid_pattern(self):
@@ -29,6 +29,7 @@ class ExtendedMetaDataMatchQueryTest(unittest.TestCase):
 
     def test_value_match_existing_pattern(self):
         self.assertTrue(self.sut.value_match('origin:korea', self.extended_metadata))
+        self.assertTrue(self.sut.value_match('genre:k-pop', self.extended_metadata))
 
     def test_value_match_existing_pattern_different_case(self):
         self.assertTrue(self.sut.value_match('origin:Korea', self.extended_metadata))
