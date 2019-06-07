@@ -59,10 +59,10 @@ class ExtendedMetaDataMatchQuery(FieldQuery):
         try:
             field_value = json_object[field_name]
         except KeyError:
-            return False
+            return len(negated_field_patterns) is 1 and len(field_patterns) is 0
 
         if field_value is None:
-            return False
+            return len(negated_field_patterns) is 1 and len(field_patterns) is 0
         elif len(field_pattern) is 0:
             return True
 

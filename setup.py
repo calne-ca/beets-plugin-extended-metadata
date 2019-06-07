@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='beets-extended-metadata',
-    version='0.1.1',
+    version='0.1.2',
     description='beets plugin to use custom, extended metadata in your queries',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
@@ -19,7 +19,6 @@ setup(
     install_requires=[
         'beets>=1.4.7',
         'futures; python_version<"3"',
-        'six',
     ],
 
     classifiers=[

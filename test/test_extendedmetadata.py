@@ -37,6 +37,7 @@ class ExtendedMetaDataMatchQueryTest(unittest.TestCase):
     def test_value_match_negated_pattern(self):
         self.assertFalse(self.sut.value_match('origin:!korea', self.extended_metadata))
         self.assertTrue(self.sut.value_match('origin:!usa', self.extended_metadata))
+        self.assertTrue(self.sut.value_match('tag:!vocaloid', self.extended_metadata))
 
     def test_value_match_array_negated_pattern(self):
         self.assertFalse(self.sut.value_match('language:!korean', self.extended_metadata))
