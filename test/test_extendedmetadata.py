@@ -6,8 +6,8 @@ from beetsplug.extendedmetadata import ExtendedMetaDataMatchQuery
 class ExtendedMetaDataMatchQueryTest(unittest.TestCase):
 
     def setUp(self):
-        # {"origin":"korea","language":["korean","english"],"vocal_gender":"male"}
-        self.extended_metadata = 'EMD: eyJvcmlnaW4iOiJrb3JlYSIsImxhbmd1YWdlIjpbImtvcmVhbiIsImVuZ2xpc2giXSwidm9jYWxfZ2VuZGVyIjoibWFsZSIsICJnZW5yZSI6ImstcG9wIn0='
+        # {"origin":"korea","language":["korean","english"],"vocal_gender":"male", "genre":"k-pop", "tag":["two words"], "test":"two words"}
+        self.extended_metadata = 'EMD: eyJvcmlnaW4iOiJrb3JlYSIsImxhbmd1YWdlIjpbImtvcmVhbiIsImVuZ2xpc2giXSwidm9jYWxfZ2VuZGVyIjoibWFsZSIsICJnZW5yZSI6ImstcG9wIiwgInRhZyI6WyJ0d28gd29yZHMiXSwgInRlc3QiOiJ0d28gd29yZHMifQ=='
         self.sut = ExtendedMetaDataMatchQuery(None, None)
 
     def test_value_match_invalid_pattern(self):
@@ -38,6 +38,10 @@ class ExtendedMetaDataMatchQueryTest(unittest.TestCase):
         self.assertFalse(self.sut.value_match('origin:!korea', self.extended_metadata))
         self.assertTrue(self.sut.value_match('origin:!usa', self.extended_metadata))
         self.assertTrue(self.sut.value_match('tag:!vocaloid', self.extended_metadata))
+
+    def test_value_match_space_in_pattern(self):
+        self.assertTrue(self.sut.value_match('tag:two words', self.extended_metadata))
+        self.assertTrue(self.sut.value_match('test:two words', self.extended_metadata))
 
     def test_value_match_array_negated_pattern(self):
         self.assertFalse(self.sut.value_match('language:!korean', self.extended_metadata))
