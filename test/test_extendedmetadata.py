@@ -6,8 +6,8 @@ from beetsplug.extendedmetadata import ExtendedMetaDataMatchQuery
 class ExtendedMetaDataMatchQueryTest(unittest.TestCase):
 
     def setUp(self):
-        # {"origin":"korea","language":["korean","english"],"vocal_gender":"male", "genre":"k-pop", "tag":["two words"], "test":"two words"}
-        self.extended_metadata = 'EMD: eyJvcmlnaW4iOiJrb3JlYSIsImxhbmd1YWdlIjpbImtvcmVhbiIsImVuZ2xpc2giXSwidm9jYWxfZ2VuZGVyIjoibWFsZSIsICJnZW5yZSI6ImstcG9wIiwgInRhZyI6WyJ0d28gd29yZHMiXSwgInRlc3QiOiJ0d28gd29yZHMifQ=='
+        # {"origin":"korea","language":["korean","english"],"vocal_gender":"male", "genre":"k-pop", "tag":["two words"], "test":"two words", "jpn_word":"けいおん!"}
+        self.extended_metadata = 'EMD: eyJvcmlnaW4iOiJrb3JlYSIsImxhbmd1YWdlIjpbImtvcmVhbiIsImVuZ2xpc2giXSwidm9jYWxfZ2VuZGVyIjoibWFsZSIsICJnZW5yZSI6ImstcG9wIiwgInRhZyI6WyJ0d28gd29yZHMiXSwgInRlc3QiOiJ0d28gd29yZHMiLCAianBuX3dvcmQiOiLjgZHjgYTjgYrjgpMhIn0='
         self.sut = ExtendedMetaDataMatchQuery(None, None)
 
     def test_value_match_invalid_pattern(self):
@@ -16,7 +16,6 @@ class ExtendedMetaDataMatchQueryTest(unittest.TestCase):
         self.assertFalse(self.sut.value_match('language:korean,', self.extended_metadata))
         self.assertFalse(self.sut.value_match('language:korean,english,', self.extended_metadata))
         self.assertFalse(self.sut.value_match('language:!', self.extended_metadata))
-        self.assertFalse(self.sut.value_match('language:!!japanese', self.extended_metadata))
 
     def test_value_match_empty_json(self):
         self.assertFalse(self.sut.value_match('origin:', '{}'))
@@ -33,6 +32,9 @@ class ExtendedMetaDataMatchQueryTest(unittest.TestCase):
 
     def test_value_match_existing_pattern_different_case(self):
         self.assertTrue(self.sut.value_match('origin:Korea', self.extended_metadata))
+
+    def test_value_match_existing_pattern_unicode_characters(self):
+        self.assertTrue(self.sut.value_match('jpn_word:けいおん!', self.extended_metadata))
 
     def test_value_match_negated_pattern(self):
         self.assertFalse(self.sut.value_match('origin:!korea', self.extended_metadata))
