@@ -1,4 +1,4 @@
-from beets.mediafile import (MediaField, MP3StorageStyle, MP4StorageStyle, StorageStyle, ASFStorageStyle, ListMediaField, \
+from mediafile import (MediaField, MP3StorageStyle, MP4StorageStyle, StorageStyle, ASFStorageStyle, ListMediaField, \
     MP3ListStorageStyle, MP4ListStorageStyle, ListStorageStyle, MP3PeopleStorageStyle, MP3SlashPackStorageStyle, \
 MP4TupleStorageStyle, MP3DescStorageStyle, MP4BoolStorageStyle, DateField, MP3UFIDStorageStyle, MP4SoundCheckStorageStyle, MP3SoundCheckStorageStyle)
 

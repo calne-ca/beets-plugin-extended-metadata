@@ -1,6 +1,7 @@
+import re
 from abc import abstractmethod, ABC
 
-from beetsplug.metadata import ExtendedMetaData
+from beetsplug.emd_metadata import ExtendedMetaData
 
 
 class EmdQuery(ABC):
@@ -15,3 +16,122 @@ class EmdQuery(ABC):
     @abstractmethod
     def matches(self, metadata: ExtendedMetaData):
         pass
+
+
+def create_query(raw_query):
+    for s in EmdQuery.__subclasses__():
+        query = s._create(raw_query)
+
+        if query is not None:
+            return query
+
+    return None
+
+
+class OneOfQuery(EmdQuery):
+    CONTAINS_MATCHER = ':'
+    _query_pattern = f'^({EmdQuery._word_pattern}){CONTAINS_MATCHER}((!?){EmdQuery._word_pattern}(,(!?){EmdQuery._word_pattern})*)*$'
+
+    def __init__(self, field, values, negated_values):
+        self.field = field
+        self.values = values
+        self.negated_values = negated_values
+
+    def matches(self, metadata: ExtendedMetaData):
+        if len(self.values) == 0 and len(self.negated_values) == 0:
+            return True
+        if len(self.values) == 0 and len(self.negated_values) == 1 and len(self.negated_values[0]) == 0:
+            return False
+
+        field_value = metadata.value(self.field)
+
+        if field_value is None:
+            return len(self.negated_values) == 1 and len(self.values) == 0
+
+        if isinstance(field_value, list):
+            for pattern in self.values:
+                for item in field_value:
+                    if pattern.lower() == item.lower():
+                        return True
+            for pattern in self.negated_values:
+                for item in field_value:
+                    if pattern.lower() == item.lower():
+                        return False
+            return len(self.negated_values) > 0
+        else:
+            for pattern in self.values:
+                if pattern.lower() == field_value.lower():
+                    return True
+            for pattern in self.negated_values:
+                if pattern.lower() == field_value.lower():
+                    return False
+            return len(self.negated_values) > 0
+
+    @staticmethod
+    def _create(raw_query):
+        re_result = re.search(OneOfQuery._query_pattern, raw_query)
+
+        if re_result is None:
+            return None
+
+        field = re_result.group(1)
+        selectors = re_result.group(2)
+
+        if field is None:
+            return None
+
+        if selectors is None:
+            return OneOfQuery(field, [], [])
+
+        values = [v for v in selectors.split(',') if v]
+        negated_values = [x[1:] for x in values if x.startswith('!')]
+        values = [x for x in values if not x.startswith('!')]
+
+        return OneOfQuery(field, values, negated_values)
+
+
+class RegexQuery(EmdQuery):
+    REGEX_MATCHER = '::'
+    _query_pattern = f'^({EmdQuery._word_pattern}){REGEX_MATCHER}(.*)$'
+
+    def __init__(self, field, regex):
+        self.field = field
+        self.regex = regex
+
+    def matches(self, metadata: ExtendedMetaData):
+        if len(self.regex) == 0:
+            return True
+
+        field_value = metadata.value(self.field)
+
+        if field_value is None:
+            return False
+
+        if isinstance(field_value, list):
+            for item in field_value:
+                if re.search(self.regex, item) is not None:
+                    return True
+            return False
+        else:
+            return re.search(self.regex, field_value) is not None
+
+    @staticmethod
+    def _create(raw_query):
+        re_result = re.search(RegexQuery._query_pattern, raw_query)
+
+        if re_result is None:
+            return None
+
+        field = re_result.group(1)
+        regex = re_result.group(2)
+
+        if field is None or regex is None:
+            return None
+
+        try:
+            re.compile(regex)
+        except re.error:
+            return None
+
+        return RegexQuery(field, regex)
+

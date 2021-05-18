@@ -2,9 +2,9 @@
 from beets.dbcore import FieldQuery
 from beets.plugins import BeetsPlugin
 
-from beetsplug.audiofilefields import fields as audio_file_fields
-from beetsplug.metadata import ExtendedMetaData
-from beetsplug.queries.helper import create_query
+from beetsplug.emd_metadata import ExtendedMetaData
+from beetsplug.emd_query import create_query
+from beetsplug.emd_audiofilefields import fields
 
 
 class ExtendedMetaDataMatchQuery(FieldQuery):
@@ -32,8 +32,8 @@ class ExtendedMetaDataPlugin(BeetsPlugin):
         self.input_field = self.config['input_field'].get('comments')
         self.query_field = self.config['query_field'].get('x')
 
-        if audio_file_fields[self.input_field] is not None:
-            extended_meta_data = audio_file_fields[self.input_field]
+        if fields[self.input_field] is not None:
+            extended_meta_data = fields[self.input_field]
             self.add_media_field(u'' + self.query_field, extended_meta_data)
 
     def queries(self):
