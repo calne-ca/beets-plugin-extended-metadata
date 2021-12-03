@@ -7,3 +7,5 @@ coverage/
 *.pyc
 .tox/
 .vimrc
+venv
+.idea
