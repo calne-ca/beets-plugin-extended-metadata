@@ -45,9 +45,9 @@ I recommend using the *comment* field, since most software out there will be abl
 
 ### Examples
 
-**Note**: All queries are case-sensitive.
-If you have a value *Abc* it will not match the query value *abc*.
-If you want to query case-insensitive, use [regex queries](#searching-for-all-rock-variant-songs).
+**Note**: All queries are case-insensitive.
+If you have a value *Abc* it will match the query value *abc*.
+If you want to query case-sensitive, use [regex queries](#searching-for-all-rock-variant-songs).
 
 #### Searching for all russian songs
 
@@ -81,6 +81,7 @@ beet list x:.genre::.+rock
 ````
 
 Here you can see how you can use [regex](https://en.wikipedia.org/wiki/Regular_expression) to make your queries more flexible.
+Just like with beets you can specify that your query value is regex by using the double colon *::* instead of a single colon.
 
 #### Searching for all songs in japanese that to not come from japan from the last 3 years
 
