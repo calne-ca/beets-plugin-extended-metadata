@@ -83,7 +83,7 @@ beet list x:.genre::.+rock
 Here you can see how you can use [regex](https://en.wikipedia.org/wiki/Regular_expression) to make your queries more flexible.
 Just like with beets you can specify that your query value is regex by using the double colon *::* instead of a single colon.
 
-#### Searching for all songs in japanese that to not come from japan from the last 3 years
+#### Searching for all songs in japanese from the last 3 years that do not come from japan
 
 This assumes you have a custom tag *language* containing the language of the song and a custom tag *origin* containing the origin country.
 
