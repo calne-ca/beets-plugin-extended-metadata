@@ -36,7 +36,7 @@ class ExtendedMetaDataCommand(Subcommand):
             return
 
         query = opts.query
-        items = lib.items(query)
+        items = lib.items(f"'{query}'")
 
         for item in items:
             print(item)

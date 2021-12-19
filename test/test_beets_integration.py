@@ -73,6 +73,12 @@ class BeetsIntegrationTest(unittest.TestCase):
         self.assertEqual(1, len(tagged_with_test1))
         self.assertTrue(tagged_with_test1[0].endswith('Title 1'))
 
+        self.beets.command('emd -q x:tag1:"test 1" -a tag2:"test 2"')
+
+        tagged_with_test2 = self.beets.list('x:tag2:"test 2"')
+        self.assertEqual(1, len(tagged_with_test2))
+        self.assertTrue(tagged_with_test2[0].endswith('Title 1'))
+
     def test_add_value_to_existing_tag(self):
         self.beets.command('emd -q title:"Title 1" -a tag1:test1')
         self.beets.command('emd -q title:"Title 1" -a tag1:test2')
