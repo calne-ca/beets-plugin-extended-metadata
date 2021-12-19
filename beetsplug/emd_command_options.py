@@ -15,8 +15,24 @@ class EmdCommandOption(ABC):
         pass
 
     @abstractmethod
-    def apply(self, item, opt_values):
+    def apply(self, emd, opt_values):
         pass
+
+
+class EmdShowOption(EmdCommandOption):
+
+    def apply(self, emd, opt_values):
+        if opt_values:
+            print(emd)
+
+    def add_parser_option(self, parser):
+        parser.add_option(
+            '-s', '--show', dest=self.parser_destination(),
+            action="store_true", help='show the extended meta data of the items'
+        )
+
+    def parser_destination(self):
+        return 'show_emd'
 
 
 class EmdAddOption(EmdCommandOption):
