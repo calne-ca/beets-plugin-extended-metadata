@@ -8,17 +8,23 @@ class ExtendedMetaData:
     _base64_pattern = '(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?=?'
     _metadata_pattern = f'^EMD: ({_base64_pattern})$'
 
-    def __init__(self, data):
-        self._data = data
+    def __init__(self, data=None):
+        self._data = data if data else {}
 
-    def value(self, field):
-        try:
-            return self._data[field]
-        except KeyError:
-            return None
+    def __getitem__(self, key):
+        return self._data[key]
+
+    def __setitem__(self, key, value):
+        self._data[key] = value if isinstance(value, list) else [value]
+
+    def __delitem__(self, key):
+        del self._data[key]
+
+    def __contains__(self, key):
+        return key in self._data
 
     @staticmethod
-    def create(raw_value):
+    def decode(raw_value):
         re_result = re.search(ExtendedMetaData._metadata_pattern, str(raw_value))
 
         if re_result is None:
@@ -34,4 +40,25 @@ class ExtendedMetaData:
         except JSONDecodeError:
             return None
 
+        for tag in meta_data:
+            value = meta_data[tag]
+            if not isinstance(value, list):
+                meta_data[tag] = [value]
+
         return ExtendedMetaData(meta_data)
+
+    def encode(self):
+
+        meta_data = self._data.copy()
+
+        for tag in meta_data.copy():
+            value = meta_data[tag]
+            if isinstance(value, list):
+                if len(value) == 1:
+                    meta_data[tag] = value[0]
+                elif len(value) == 0:
+                    del meta_data[tag]
+
+        encoded_data = base64.b64encode(json.dumps(meta_data).encode("utf-8")).decode("utf-8")
+
+        return f'EMD: {encoded_data}'

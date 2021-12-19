@@ -9,3 +9,5 @@ coverage/
 .vimrc
 venv
 .idea
+*.sh
+!publish.sh

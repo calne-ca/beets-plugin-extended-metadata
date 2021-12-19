@@ -1,0 +1,19 @@
+plugins: extendedmetadata
+directory: /music
+library: /config/musiclibrary.blb
+
+extendedmetadata:
+    query_prefix: 'x'
+    input_field: 'comments'
+
+import:
+    write: no
+    copy: no
+    move: no
+    resume: no
+    incremental: no
+    quiet: yes
+    quiet_fallback: asis
+    autotag: no
+    from_scratch: no
+    timid: no
