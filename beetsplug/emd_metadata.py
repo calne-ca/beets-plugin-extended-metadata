@@ -24,7 +24,7 @@ class ExtendedMetaData:
         return key in self._data
 
     def __str__(self):
-        return str(self._json_data())
+        return self._json_data().decode('utf-8')
 
     @staticmethod
     def decode(raw_value):
@@ -51,7 +51,7 @@ class ExtendedMetaData:
         return ExtendedMetaData(meta_data)
 
     def encode(self):
-        encoded_data = base64.b64encode(self._json_data().encode('utf-8')).decode('utf-8')
+        encoded_data = base64.b64encode(self._json_data()).decode('utf-8')
         return f'EMD: {encoded_data}'
 
     def _json_data(self):
@@ -65,4 +65,4 @@ class ExtendedMetaData:
                 elif len(value) == 0:
                     del meta_data[tag]
 
-        return json.dumps(meta_data)
+        return json.dumps(meta_data, ensure_ascii=False).encode('utf-8')

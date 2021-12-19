@@ -55,6 +55,10 @@ class BeetsIntegrationTest(unittest.TestCase):
         self.assertTrue('"tag1": "test1"' in self.beets.command('emd -q title:"Title 1" -s')[1])
         self.assertTrue('"tag1": ["test1", "test2"]' in self.beets.command('emd -q title:"Title 1" -a tag1:test2 -s')[1])
 
+    def test_unicode_values(self):
+        self.assertTrue('"vocals": "初音ミク"' in self.beets.command('emd -q title:"Title 1" -a vocals:初音ミク -s')[1])
+        self.assertTrue('"vocals": "初音ミク"' in self.beets.command('emd -q title:"Title 2" -a vocals:"\u521d\u97f3\u30df\u30af" -s')[1])
+
     def test_add_new_tag(self):
         self.beets.command('emd -q title:"Title 1" -a tag1:test1')
 
