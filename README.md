@@ -2,8 +2,8 @@
 
 # Beets Extended Metadata Plugin
 This is a plugin for the music management tool [beets](https://beets.io).<br>
-This plugin extends beets with a sub command that lets you write [Extended Metadata](https://github.com/calne-ca/beets-plugin-extended-metadata/blob/master/EMD.md) to your audio files.
-It also extends beets query capabilities, allowing you to query your music library based on Extended Metadata.
+This plugin adds [Extended Metadata](https://github.com/calne-ca/beets-plugin-extended-metadata/blob/master/EMD.md) capabilities to beets.
+It extends the beets query syntax, allowing you to query songs based on Extended Metadata and also allows you to write, update and view Extended Metadata based on queries
 
 ## Setup
 
@@ -99,16 +99,16 @@ This assumes you have a custom tag *language* containing the language of the son
 beet list x:.language:japanese x:.origin:'!japan' year:2010..2020
 ````
 
-In this example you can see how to easily combine extended metadata queries with normal audio field queries.
+In this example you can see how to easily combine Extended Metadata queries with normal audio field queries.
 It also shows how to negate query values. If you prefix the query tag value with ! it will mean *not equals* / *not contains*.
 
-### Writing Extended Metadata
+### Managing Extended Metadata
 
 The query capabilities work as long as the Extended Metadata has been written to the files according to the [Extended Metadata documentation](EMD.md).
 This means it is not required to use this plugin to write the Extended Metadata to your files.
 
-The plugin provides an *emd* subcommand to write and update Extended Metadata based on beets queries.
-The sub command requires a beets query that matches the items you want to edit and a list of options that define what you want to do.
+The plugin provides an *emd* subcommand to write, update and show Extended Metadata based on beets queries.
+The sub command requires a beets query that matches the items you want to apply options to, and a list of options that define what you want to do.
 To get an overview of all options you can use the *--help* option:
 
 ```shell
@@ -121,9 +121,8 @@ Options:
                         a beets query that matches the items to which the
                         actions will be applied to.
   -u UPDATE_EXPRESSION, --update=UPDATE_EXPRESSION
-                        update or move a tag value. Example:
-                        "tag1:v1/tag1:v2" or "tag1:v1/tag2:v1" or
-                        "tag1:v1/tag2:v2".
+                        update or move a tag value. Example: "tag1:v1/tag1:v2"
+                        or "tag1:v1/tag2:v1" or "tag1:v1/tag2:v2".
   -r RENAME_EXPRESSION, --rename=RENAME_EXPRESSION
                         rename a tag. Example: "tag1/tag2".
   -a ADD_EXPRESSION, --add=ADD_EXPRESSION
@@ -132,13 +131,24 @@ Options:
   -d DELETE_EXPRESSION, --delete=DELETE_EXPRESSION
                         delete a tag value or tag. Example: "tag1" or
                         "tag1:v1".
-
+  -s, --show            show the extended meta data of the files
 ```
 
 The *query* option is mandatory. Everything else is optional but there must be at least one additional option.
 Except for the *query* option all options are repeatable. By repeating an option you can add several expressions in the same command.
 
 #### Examples
+
+##### Show Extended Metadata of matching files
+
+```shell
+beet emd -q title:'404 not found' -s
+```
+
+With the *show* option the Extended Metadata of each matching file will be printed to the screen.
+The Extended Metadata will be shown in its json format.
+You can also combine this option with any other options,
+in which case the shown Extended Metadata represents the resulting Extended Metadata after all other option have been applied.
 
 ##### Add tags for a specific artist
 
@@ -203,14 +213,14 @@ by defining different tags and values in both the old- and new tag value express
 ##### Everything combined
 
 ```shell
-beet emd -q 'x:origin:germany,austria x:language!german' -a tag:western,lederhosen -a category:good -d circle -u circle:'hyper hyper'/tag:hyper -r category/rating
+beet emd -q 'x:origin:germany,austria x:language!german' -a tag:western,lederhosen -a category:good -d circle -u circle:'hyper hyper'/tag:hyper -r category/rating -s
 ```
 
 This adds the values *western* and *lederhosen* to the tag *tag*, 
 adds *good* to the tag *category*, 
 deletes the tag *circle*, 
-moves the value *hyper hyper* from tag *circle* to the tag *tag* and changes it to *hyper*
-and renames the tag *origin* to country
+moves the value *hyper hyper* from tag *circle* to the tag *tag* and changes it to *hyper*,
+renames the tag *origin* to country and prints the resulting Extended Metadata to the screen
 for all songs from *germany* or *austria* that are *not* *german*.
 
 Here we delete and rename tags that are also referenced in add and update operations.
@@ -219,6 +229,7 @@ In general this works, but it is important to be aware of the order in which the
 2. Rename
 3. Add
 4. Delete
+5. Show
 
 So in this example we rename *category* to *rating* before we add the value *good* to the tag *category*.
 So we basically add a tag with the old name after renaming it.

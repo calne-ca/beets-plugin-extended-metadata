@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='beets-extended-metadata',
-    version='0.2.3',
+    version='0.2.4',
     description='beets plugin to use custom, extended metadata',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',

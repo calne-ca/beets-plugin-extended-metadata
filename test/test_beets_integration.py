@@ -50,6 +50,11 @@ class BeetsIntegrationTest(unittest.TestCase):
                 return True
         return False
 
+    def test_show_emd(self):
+        self.beets.command('emd -q title:"Title 1" -a tag1:test1')
+        self.assertTrue('"tag1": "test1"' in self.beets.command('emd -q title:"Title 1" -s')[1])
+        self.assertTrue('"tag1": ["test1", "test2"]' in self.beets.command('emd -q title:"Title 1" -a tag1:test2 -s')[1])
+
     def test_add_new_tag(self):
         self.beets.command('emd -q title:"Title 1" -a tag1:test1')
 

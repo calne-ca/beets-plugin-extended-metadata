@@ -1,13 +1,15 @@
 from beets.ui import Subcommand
 
 from beetsplug.emd_metadata import ExtendedMetaData
-from beetsplug.emd_command_options import EmdAddOption, EmdDeleteOption, EmdUpdateOption, EmdRenameTagOption
+from beetsplug.emd_command_options import EmdAddOption, EmdDeleteOption, EmdUpdateOption, EmdRenameTagOption, \
+    EmdShowOption
 
 emd_command_options = [
     EmdUpdateOption(),
     EmdRenameTagOption(),
     EmdAddOption(),
-    EmdDeleteOption()
+    EmdDeleteOption(),
+    EmdShowOption()
 ]
 
 
@@ -34,10 +36,11 @@ class ExtendedMetaDataCommand(Subcommand):
             return
 
         query = opts.query
-
         items = lib.items(query)
 
         for item in items:
+            print(item)
+
             old_tags = dict(item).copy()
             emd = self._get_emd(item)
 
@@ -50,7 +53,6 @@ class ExtendedMetaDataCommand(Subcommand):
             if old_tags == new_tags:
                 continue
 
-            print(f'Updating meta data for file {item}')
             item.write()
             item.store()
 
