@@ -42,10 +42,6 @@ class BeetsContainer(DockerContainer):
     def list(self, query=''):
         return self.command(f'list {query}')
 
-    def exec(self, command):
-        result = super(BeetsContainer, self).exec(command)
-        return result
-
     def install_packages(self):
         for name, path in self.package_src_dirs:
             module_name = basename(path)

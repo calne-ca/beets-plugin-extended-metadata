@@ -118,6 +118,8 @@ Options:
   -q QUERY, --query=QUERY
                         a beets query that matches the items to which the
                         actions will be applied to.
+  -y, --yes             automatically confirms yes/no prompts that require
+                        user input
   -u UPDATE_EXPRESSION, --update=UPDATE_EXPRESSION
                         update or move a tag value. Example: "tag1:v1/tag1:v2"
                         or "tag1:v1/tag2:v1" or "tag1:v1/tag2:v2".

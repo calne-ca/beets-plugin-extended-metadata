@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='beets-extended-metadata',
-    version='0.2.6',
+    version='0.2.7',
     description='beets plugin to use custom, extended metadata',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
@@ -12,8 +12,6 @@ setup(
     license='MIT',
     platforms='ALL',
 
-    test_suite='test',
-
     packages=['beetsplug'],
 
     install_requires=[
@@ -21,11 +19,10 @@ setup(
         'mediafile>=0.9.0'
     ],
 
-    tests_require=[
-        'pytest==6.2.5',
-        'mockito==1.3.0',
-        'testcontainers==3.4.2'
-    ],
+    extras_require={
+        'build': ['wheel', 'twine'],
+        'test': ['pytest', 'mockito', 'testcontainers']
+    },
 
     classifiers=[
         'Topic :: Multimedia :: Sound/Audio',
