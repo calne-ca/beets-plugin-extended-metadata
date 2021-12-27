@@ -27,7 +27,7 @@ Also add *extendedmetadata* to the *plugins* section.
 
 The *query_prefix* defines a prefix that you need to add to the parts of your queries which should look into Extended Metadata instead of the normal metadata.
 
-The *input_field* is the name of the audio tag, according to [this audio file fields list](beetsplug/emd_audiofilefields.py), that contains your Extended Metadata string.
+The *input_field* is the name of the audio tag, according to [this audio file fields list](beetsplug/emd/audiofilefields.py), that contains your Extended Metadata string.
 As default, the *comments* field will be used. Depending on what field you choose some software, including beets, will not be able to handle or persist it.
 I recommend using the *comments* field, since most software out there will be able to work with this field and having any other information in this field is usually unnecessary.
 
@@ -111,13 +111,10 @@ To get an overview of all options you can use the *--help* option:
 
 ```shell
 $ beet emd --help
-Usage: beet emd [options]
+Usage: beet emd <query> [options]
 
 Options:
   -h, --help            show this help message and exit
-  -q QUERY, --query=QUERY
-                        a beets query that matches the items to which the
-                        actions will be applied to.
   -y, --yes             automatically confirms yes/no prompts that require
                         user input
   -u UPDATE_EXPRESSION, --update=UPDATE_EXPRESSION
@@ -128,21 +125,27 @@ Options:
   -a ADD_EXPRESSION, --add=ADD_EXPRESSION
                         add a tag value. Example: "tag1:v1" or
                         "tag1:v1,v2,v3".
+  -c COPY_EXPRESSION, --copy=COPY_EXPRESSION
+                        copy a tag value from/to extended metadata or normal
+                        metadata. Tags prefixed with . refer to tags of normal
+                        metadata. Examples: "tag1/tag2", ".artist/tag2",
+                        "tag1/.artist", ".artist/.album_artist"
   -d DELETE_EXPRESSION, --delete=DELETE_EXPRESSION
                         delete a tag value or tag. Example: "tag1" or
                         "tag1:v1".
   -s, --show            show the extended meta data of the items
 ```
 
-The *query* option is mandatory. Everything else is optional but there must be at least one additional option.
-Except for the *query* option all options are repeatable. By repeating an option you can add several expressions in the same command.
+The query argument can be passed to the *emd* command in the same way you pass it to the *list* command.
+The options are optional, but you have to set at least one option.
+All non-flag options are repeatable. By repeating an option you can apply multiple actions of the same type.
 
 ### Examples
 
 #### Show Extended Metadata of matching files
 
 ```shell
-beet emd -q title:'404 not found' -s
+beet emd artist:ギガP album:'No title' -s
 ```
 
 With the *show* option the Extended Metadata of each matching file will be printed to the screen.
@@ -153,7 +156,7 @@ in which case the shown Extended Metadata represents the resulting Extended Meta
 #### Add tags for a specific artist
 
 ```shell
-beet emd -q artist:REOL -a language:japanese -a origin:japan
+beet emd artist:REOL -a language:japanese -a origin:japan
 ```
 
 Here you can see how to add new tag values to the Extended Metadata of the file.
@@ -162,7 +165,7 @@ You can add multiple tags by repeating the *add* option.
 #### Remove a tag from all files
 
 ```shell
-beet emd -q '' -d genre
+beet emd '' -d genre
 ```
 
 You can match all files by simply passing an empty string to the *query* option.
@@ -171,7 +174,7 @@ This deletes the *genre* tag from all files, regardless of its value.
 #### Remove a tag value for certain audio formats
 
 ```shell
-beet emd -q path::*\.flac -d tag:uncompressed
+beet emd path::*\.flac -d tag:uncompressed
 ```
 
 Here we do not delete the entire tag but only a certain value of the tag.
@@ -180,7 +183,7 @@ You can use a path query to apply the changes to certain directories or, in this
 #### Rename a tag in all files
 
 ```shell
-beet emd -q '' -r singer/vocals
+beet emd '' -r singer/vocals
 ```
 
 With the *rename* option you can rename a tag by passing the old- and the new tag name separated by */*.
@@ -188,7 +191,7 @@ With the *rename* option you can rename a tag by passing the old- and the new ta
 #### Update a tag value
 
 ```shell
-beet emd -q x:origin:germany -u category:good/category:favorite
+beet emd x:origin:germany -u category:good/category:favorite
 ```
 
 With the *update* option you can change a tag value.
@@ -197,7 +200,7 @@ The syntax is the same as with the *rename* option but it also includes a tag va
 #### Move a tag value in all files
 
 ```shell
-beet emd -q '' -u tag:metal/genre:metal
+beet emd '' -u tag:metal/genre:metal
 ```
 
 By defining different tag names ins the old- and new value expression you can move a value from one tag to another.
@@ -205,22 +208,34 @@ By defining different tag names ins the old- and new value expression you can mo
 #### Move and update a tag value in all files
 
 ```shell
-beet emd -q '' -u tag:'thrash metal'/genre:metal
+beet emd '' -u tag:'thrash metal'/genre:metal
 ```
 
-by defining different tags and values in both the old- and new tag value expression you can move and change a tag value at the same time.
+By defining different tags and values in both the old- and new tag value expression you can move and change a tag value at the same time.
+
+#### Copy a value from normal metadata to extended metadata in all files
+```shell
+beet emd '' -c .comments/lyrics
+```
+
+In a copy expression your can use normal metadata tags as source or destination for a copy operation by prefixing the tag name with a dot.
+In this example the value from the normal metadata tag *comments* will be copied to an EMD tag *lyrics*.
+When the destination tag does not exist it will be created, if it does exist the value will be appended to existing values.
+
+**Hint:** When adding EMD to a file for the first time you can use this to back up existing tag values from the tag that will be used to store the EMD.
 
 #### Everything combined
 
 ```shell
-beet emd -q 'x:origin:germany,austria x:language!german' -a tag:western,lederhosen -a category:good -d circle -u circle:'hyper hyper'/tag:hyper -r category/rating -s
+beet emd x:origin:germany,austria x:language:'!german' -a tag:western,lederhosen -a category:good -d circle -u circle:'hyper hyper'/tag:hyper -r category/rating -c .artist:artist -s
 ```
 
 This adds the values *western* and *lederhosen* to the tag *tag*, 
 adds *good* to the tag *category*, 
 deletes the tag *circle*, 
 moves the value *hyper hyper* from tag *circle* to the tag *tag* and changes it to *hyper*,
-renames the tag *origin* to country and prints the resulting Extended Metadata to the screen
+renames the tag *origin* to country, copies the value from the normal tag *artist* to the emd tag *artist*
+and prints the resulting Extended Metadata to the screen
 for all songs from *germany* or *austria* that are *not* *german*.
 
 Here we delete and rename tags that are also referenced in add and update operations.
@@ -228,8 +243,9 @@ In general this works, but it is important to be aware of the order in which the
 1. Update
 2. Rename
 3. Add
-4. Delete
-5. Show
+4. Copy
+5. Delete
+6. Show
 
 So in this example we rename *category* to *rating* before we add the value *good* to the tag *category*.
 So we basically add a tag with the old name after renaming it.

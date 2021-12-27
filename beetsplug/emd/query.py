@@ -2,7 +2,7 @@ import re
 from abc import abstractmethod, ABC
 
 from beets.dbcore import Query
-from beetsplug.emd_metadata import ExtendedMetaData
+from beetsplug.emd.metadata import ExtendedMetaData
 
 
 class ExtendedMetaDataMatchQuery(Query):

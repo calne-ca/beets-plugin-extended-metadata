@@ -1,8 +1,8 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='beets-extended-metadata',
-    version='0.2.7',
+    version='0.3.0',
     description='beets plugin to use custom, extended metadata',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
@@ -12,7 +12,7 @@ setup(
     license='MIT',
     platforms='ALL',
 
-    packages=['beetsplug'],
+    packages=find_packages(exclude=['test', 'test.*']),
 
     install_requires=[
         'beets>=1.4.9',
@@ -34,5 +34,5 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
-    ],
+    ]
 )

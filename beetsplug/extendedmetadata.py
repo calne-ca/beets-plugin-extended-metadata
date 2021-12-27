@@ -1,6 +1,6 @@
 from beets.plugins import BeetsPlugin
-from beetsplug.emd_command import ExtendedMetaDataCommand
-from beetsplug.emd_query import ExtendedMetaDataMatchQuery
+from beetsplug.emd.command import ExtendedMetaDataCommand
+from beetsplug.emd.query import ExtendedMetaDataMatchQuery
 
 
 class ExtendedMetaDataPlugin(BeetsPlugin):
