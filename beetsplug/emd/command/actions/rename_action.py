@@ -43,7 +43,7 @@ class EmdRenameTagAction(EmdCommandItemAction):
 
 
 class RenameExpression:
-    _expression_pattern = f'^({EmdQuery._word_pattern})/({EmdQuery._word_pattern})$'
+    _expression_pattern = f'^({EmdQuery.TAG_PATTERN})/({EmdQuery.TAG_PATTERN})$'
 
     def __init__(self, value):
         re_result = re.search(self._expression_pattern, value)

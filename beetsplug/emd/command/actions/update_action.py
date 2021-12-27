@@ -65,7 +65,7 @@ class EmdUpdateTagAction(EmdCommandItemAction):
 
 
 class UpdateExpression:
-    _base_expression_pattern = f'({EmdQuery._word_pattern}):({EmdQuery._word_pattern})'
+    _base_expression_pattern = f'({EmdQuery.TAG_PATTERN}):({EmdQuery.VALUE_PATTERN})?'
     _expression_pattern = f'^{_base_expression_pattern}/{_base_expression_pattern}$'
 
     def __init__(self, value):

@@ -246,3 +246,8 @@ class BeetsIntegrationTest(unittest.TestCase):
         self.beets.command("emd -y comments:'Comment 1' -c .comments/tag1")
         self.assertEqual(0, len(self.beets.list("comments:'Comment 1'")))
         self.assertEqual(1, len(self.beets.list("x:tag1:'Comment 1'")))
+
+    def test_special_characters(self):
+        self.beets.command('emd -y artist:"Artist 1" -a tag1:"test:;!\'/ 1"')
+        self.assertEqual(1, len(self.beets.list('x:tag1:"test:;!\'/ 1"')))
+        self.assertEqual('{"tag1": "test:;!\'/ 1"}', self.beets.command('emd x:tag1:"test:;!\'/ 1" -s')[1])

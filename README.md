@@ -27,9 +27,20 @@ Also add *extendedmetadata* to the *plugins* section.
 
 The *query_prefix* defines a prefix that you need to add to the parts of your queries which should look into Extended Metadata instead of the normal metadata.
 
-The *input_field* is the name of the audio tag, according to [this audio file fields list](beetsplug/emd/audiofilefields.py), that contains your Extended Metadata string.
+The *input_field* is the name of the audio tag, according to [this audio file fields list](https://github.com/calne-ca/beets-plugin-extended-metadata/blob/master/beetsplug/emd/audiofilefields.py), that contains your Extended Metadata string.
 As default, the *comments* field will be used. Depending on what field you choose some software, including beets, will not be able to handle or persist it.
 I recommend using the *comments* field, since most software out there will be able to work with this field and having any other information in this field is usually unnecessary.
+
+## Limitations
+
+The query syntax as well as the *emd* sub-command syntax have some limitations regarding the characters you can use for tag names / tag values.
+
+**Tag Name Limitations:**<br>
+A tag name may only contain letters and numbers (including unicode letters) as well as hyphens, underscores and spaces.
+
+**Tag Value Limitations:**<br>
+A tag value may contain any character except for commas, also it cannot start with a colon.
+This limitation is necessary because colons and commas are special characters that cannot be escaped in any way without breaking the query/command syntax.
 
 ## Writing Queries
 
