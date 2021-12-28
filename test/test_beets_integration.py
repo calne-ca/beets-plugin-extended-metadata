@@ -251,3 +251,7 @@ class BeetsIntegrationTest(unittest.TestCase):
         self.beets.command('emd -y artist:"Artist 1" -a tag1:"test:;!\'/ 1"')
         self.assertEqual(1, len(self.beets.list('x:tag1:"test:;!\'/ 1"')))
         self.assertEqual('{"tag1": "test:;!\'/ 1"}', self.beets.command('emd x:tag1:"test:;!\'/ 1" -s')[1])
+
+        self.beets.command('emd -y artist:"Artist 1" -a tag2:test/2')
+        self.beets.command('emd -y artist:"Artist 1" -u tag2:test/2/tag2:test/3')
+        self.assertEqual(1, len(self.beets.list('x:tag2:test/3')))
